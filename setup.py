@@ -9,7 +9,7 @@ setup(
     long_description_content_type = "text/markdown",
     author = 'danielangelarro',
     author_email = 'danielangelarro@gmail.com',
-    url = 'https://github.com/Kehrveiz/ChefBot',
+    url = 'https://github.com/danielangelarro/ATM-Virtual',
     scripts = ['run.py'],
     packages = find_packages(),
     keywords = 'atm python',

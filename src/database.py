@@ -29,15 +29,15 @@ class DBManager:
 
     # ==== users =====
 
-    def add_user(self, gid: int, name: str, cuenta: str, npi: str, sd: float, st: float) -> None:
+    def add_user(self, name: str, cuenta: str, npi: str, sd: float, st: float) -> None:
         self.commit('INSERT INTO users VALUES (?,?,?,?,?)',
                     (cuenta, name, npi, sd, st))
     
     def update_user_sd(self, cuenta: str, monto) -> None:
-        self.commit('UPDATE users SET sd=? WHERE cuenta=?', (monto, cuenta))
+        self.commit('UPDATE users SET saldoDisponible=? WHERE cuenta=?', (monto, cuenta))
 
     def update_user_st(self, cuenta: str, monto) -> None:
-        self.commit('UPDATE users SET st=? WHERE cuenta=?', (monto, cuenta))
+        self.commit('UPDATE users SET saldoTotal=? WHERE cuenta=?', (monto, cuenta))
 
     def remove_user(self, cuenta: str) -> None:
         self.commit('DELETE FROM users WHERE cuenta=?', (cuenta,))

@@ -1,6 +1,6 @@
 
 class RanuraDeposito:
 
-    def seRecibioSobre():
+    def seRecibioSobre(self):
 
         return True

@@ -8,6 +8,7 @@ from .retiro import Retiro
 from .deposito import Deposito
 
 from enum import Enum
+import curses
 
 
 class  OpcionMenu(Enum):
@@ -32,7 +33,7 @@ class ATM:
 
     def __CrearTransaccion(self, tipo):
         
-        if tipo == OpcionMenu.SOLICITUD_SALDO:
+        if tipo == 1:
 
             return SolicitudSaldo(
                 self.__numero_cuenta_actual, 
@@ -40,7 +41,7 @@ class ATM:
                 self.__baseDatosBanco
             )
 
-        if tipo == OpcionMenu.RETIRO:
+        if tipo == 2:
 
             return Retiro(
                 self.__numero_cuenta_actual,
@@ -50,7 +51,7 @@ class ATM:
                 self.__dispensador_efectivo
             )
 
-        if tipo == OpcionMenu.DEPOSITO:
+        if tipo == 3:
 
             return Deposito(
                 self.__numero_cuenta_actual,
@@ -63,12 +64,14 @@ class ATM:
 
     def __AutenticarUsuario(self):
 
-        self.__pantalla.mostrarMensaje("\nEscriba su numero de cuenta: ")
-        numeroCuenta = self.__teclado.obtenerEntrada()
-        self.__pantalla.mostrarMensaje("\nEscriba su NIP: ")
-        nip = self.__teclado.obtenerEntrada()
+        # self.__pantalla.mostrarMensaje("\nEscriba su numero de cuenta: ")
+        # numeroCuenta = self.__teclado.obtenerEntrada()
+        # self.__pantalla.mostrarMensaje("\nEscriba su NIP: ")
+        # nip = self.__teclado.obtenerEntrada()
 
-        usuarioAutenticado = self.__baseDatosBanco.autenticarUsuario(numeroCuenta, nip)
+        numeroCuenta, nip = curses.wrapper(self.__pantalla.mostrarLogin)
+
+        self.__usuario_autentificado = self.__baseDatosBanco.autenticarUsuario(numeroCuenta, str(nip))
 
         if self.__usuario_autentificado:
         
@@ -84,15 +87,16 @@ class ATM:
 
         while not usuarioSalio:
 
+            self.__pantalla.borrarPantalla()
             seleccionMenuPrincipal = self.__MostrarMenuPrincipal()
-            transacciones = (OpcionMenu.SOLICITUD_SALDO, OpcionMenu.RETIRO, OpcionMenu.DEPOSITO)
+            transacciones = (1, 2, 3)
 
             if seleccionMenuPrincipal in transacciones:
 
                 transaccionActualPtr = self.__CrearTransaccion(seleccionMenuPrincipal)
-                transaccionActualPtr.Ejecutar()
+                transaccionActualPtr.ejecutar()
             
-            elif seleccionMenuPrincipal == OpcionMenu.SALIR:
+            elif seleccionMenuPrincipal == 4:
 
                 self.__pantalla.mostrarLineaMensaje("\nSaliendo del sistema...")
                 usuarioSalio = True
@@ -103,27 +107,37 @@ class ATM:
                 self.__pantalla.mostrarLineaMensaje("\nNo introdujo una seleccion valida. Intente de nuevo.")
                 break
 
+            aux = input()
+
 
     def __MostrarMenuPrincipal(self):
 
-        self.__pantalla.mostrarLineaMensaje("\nMenu principal:")
-        self.__pantalla.mostrarLineaMensaje("1 - Ver mi saldo")
-        self.__pantalla.mostrarLineaMensaje("2 - Retirar efectivo")
-        self.__pantalla.mostrarLineaMensaje("3 - Depositar fondos")
-        self.__pantalla.mostrarLineaMensaje("4 - Salir\n")
-        self.__pantalla.mostrarMensaje("Introduzca una opcion: ")
+        # self.__pantalla.mostrarLineaMensaje("\nMenu principal:")
+        # self.__pantalla.mostrarLineaMensaje("1 - Ver mi saldo")
+        # self.__pantalla.mostrarLineaMensaje("2 - Retirar efectivo")
+        # self.__pantalla.mostrarLineaMensaje("3 - Depositar fondos")
+        # self.__pantalla.mostrarLineaMensaje("4 - Salir\n")
+        # self.__pantalla.mostrarMensaje("Introduzca una opcion: ")
         
-        return self.__teclado.obtenerEntrada();
+        opt = curses.wrapper(self.__pantalla.mostrarMenuInicio)
+
+        # return self.__teclado.obtenerEntrada();
+        return int(opt)
 
 
     def Ejecutar(self):
 
         while True:
 
-            while not self.__usuario_autentificado:
 
-                self.__pantalla.mostrarLineaMensaje("\nBienvenido")
+            while not self.__usuario_autentificado:
+                self.__pantalla.borrarPantalla()
+
+                #self.__pantalla.mostrarLineaMensaje("\nBienvenido")
+                
                 self.__AutenticarUsuario()
+
+                # aux = input()
             
             self.__RealizarTransacciones()
             self.__usuario_autentificado = False

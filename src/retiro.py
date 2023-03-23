@@ -4,6 +4,8 @@ from .base_datos_banco import BaseDatosBanco
 from .teclado import Teclado
 from .dispensador_efectivo import DispensadorEfectivo
 
+import curses
+
 
 CANCELO = 6;
 
@@ -28,16 +30,18 @@ class Retiro(Transaccion):
 
         while opcionUsuario == 0:
 
-            pantalla.mostrarLineaMensaje("\nOpciones de retiro:")
-            pantalla.mostrarLineaMensaje("1 - $20")
-            pantalla.mostrarLineaMensaje("2 - $40")
-            pantalla.mostrarLineaMensaje("3 - $60")
-            pantalla.mostrarLineaMensaje("4 - $100")
-            pantalla.mostrarLineaMensaje("5 - $200")
-            pantalla.mostrarLineaMensaje("6 - Cancelar transaccion")
-            pantalla.mostrarMensaje("\nElija una opcion de retiro (1-6): ")
+            # pantalla.borrarPantalla()
+            # pantalla.mostrarLineaMensaje("\nOpciones de retiro:")
+            # pantalla.mostrarLineaMensaje("1 - $20")
+            # pantalla.mostrarLineaMensaje("2 - $40")
+            # pantalla.mostrarLineaMensaje("3 - $60")
+            # pantalla.mostrarLineaMensaje("4 - $100")
+            # pantalla.mostrarLineaMensaje("5 - $200")
+            # pantalla.mostrarLineaMensaje("6 - Cancelar transaccion")
+            # pantalla.mostrarMensaje("\nElija una opcion de retiro (1-6): ")
 
-            entrada = self.__teclado.obtenerEntrada()
+            # entrada = self.__teclado.obtenerEntrada()
+            entrada = curses.wrapper(pantalla.mostrarRetiro)
 
             if entrada in (1, 2, 3, 4, 5):
 
@@ -64,8 +68,9 @@ class Retiro(Transaccion):
         baseDatosBanco = super().obtenerBaseDatosBanco()
         pantalla = super().obtenerPantalla()
 
-        while repetirTrensaccion or (not efectivoDispensado and not transaccionCancelada):
+        while repetirTrensaccion and (not efectivoDispensado and not transaccionCancelada):
 
+            pantalla.borrarPantalla()
             seleccion = self.__mostrarMenuDeMontos()
 
             if seleccion is not CANCELO:
@@ -89,5 +94,9 @@ class Retiro(Transaccion):
                 
                 else:
 
-                    pantalla.mostrarLineaMensaje("\nCancelando la transaccion...")
+                    pantalla.mostrarLineaMensaje("Dinero insuficiente.\nCancelando la transaccion...\n\nPresione una tecla para continuar...")
                     transaccionCancelada = True
+
+            else: 
+                repetirTrensaccion = False
+

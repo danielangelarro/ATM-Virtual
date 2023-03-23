@@ -23,8 +23,16 @@ class Deposito(Transaccion):
 
         pantalla = super().obtenerPantalla()
 
-        pantalla.mostrarMensaje("\nIntroduzca un monto a depositar en CENTAVOS (o 0 para cancelar): ");
-        entrada = self.__teclado.obtenerEntrada()
+        while True:
+            pantalla.borrarPantalla()
+            pantalla.mostrarMensaje("\nIntroduzca un monto a depositar en CENTAVOS (o 0 para cancelar): ");
+
+            try:
+                entrada = self.__teclado.obtenerEntrada()
+                break
+            except Exception:
+                pantalla.mostrarError('No es un numero valido!!')
+                aux = input()
 
         return CANCEL01 if entrada == CANCEL01 else entrada / 100
 
@@ -38,9 +46,7 @@ class Deposito(Transaccion):
 
         if self.__monto is not CANCEL01:
 
-            pantalla.mostrarMensaje("\nInserte un sobre de deposito que contenga ")
-            pantalla.mostrarMontoDolares(self.__monto)
-            pantalla.mostrarLineaMensaje(" en la ranura de deposito.")
+            pantalla.mostrarMensaje(f"\nInserte un sobre de deposito que contenga {self.__monto} en la ranura de deposito.")
 
             sobreRecibido = self.__ranura_deposito.seRecibioSobre()
 
